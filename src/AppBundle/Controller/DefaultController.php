@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Konzesioa;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -13,10 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/subentzioak", name="subentzioak")
+     * @Route("/get/subentzioak", name="subentzioak")
      * @param Request $request
      *
      * @return Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function subentzioakAction(Request $request)
     {
@@ -121,11 +123,14 @@ class DefaultController extends Controller
         return new JsonResponse( array( 'data' => 'No data',) );
     }
 
+
+
     /**
-     * @Route("/konzesioak", name="konzesioak")
+     * @Route("/get/konzesioak", name="get_konzesioak")
      * @param Request $request
      *
      * @return Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function konzesioakAction(Request $request)
     {
@@ -211,9 +216,30 @@ class DefaultController extends Controller
         $miJson = json_encode( $data[ "rows" ] );
         $arr = array();
 
+        $em = $this->getDoctrine()->getManager();
+
         if ( array_key_exists("rows", $data)) {
             if ($data["rows"] !== null) {
                 foreach ($data["rows"] as $a) {
+                    /** @var Konzesioa $k */
+                    $k = new Konzesioa();
+                    $k->setAdministracion( $a[ 2 ] );
+                    $k->setDepartamento( $a[ 3 ] );
+                    $k->setOrgano( $a[ 4 ] );
+                    $k->setTituloConvocatoria( $a[ 5 ] );
+                    $k->setBbReguladoras( $a[ 6 ] );
+                    $k->setAplicacionPresupuestaria( $a[ 7 ] );
+                    $k->setFechaConcesion( $a[ 8 ] );
+                    $k->setBeneficiario( $a[ 9 ] );
+                    $k->setImporte( $a[ 10 ] );
+                    $k->setInstrumento( $a[ 11 ] );
+                    $k->setAyudaEquivalente( $a[ 12 ] );
+                    $k->setDetalles( $a[ 13 ] );
+                    $em->persist( $k );
+
+
+
+
                     $temp = array(
                         'administracion'            => $a[ 2 ],
                         'departamento'              => $a[ 3 ],
@@ -230,6 +256,7 @@ class DefaultController extends Controller
                     );
                     array_push( $arr, $temp );
                 }
+                $em->flush();
             }
 
             return new JsonResponse( $arr );
@@ -242,6 +269,7 @@ class DefaultController extends Controller
 
         $nireCookie ="";
         $lehena = 1;
+        $resp="";
 
         foreach ($gaileta as $key => $val) {
 
@@ -253,10 +281,14 @@ class DefaultController extends Controller
             }
         }
         $var1 = "JSESSIONID=".$gaileta[0]["Value"].";";
-        $var2 = " TS01358f12=".$gaileta[1]["Value"].";";
-        $var3 = " TS0181fda2=".$gaileta[2]["Value"];
+        $resp = $var1;
+        if (count($gaileta)>1) {
+            $var2 = " TS01358f12=".$gaileta[1]["Value"].";";
+            $var3 = " TS0181fda2=".$gaileta[2]["Value"];
+            $resp = $resp . $var2 . $var3;
+        }
 
 
-        return $var1.$var2.$var3;
+        return $resp;
     }
 }

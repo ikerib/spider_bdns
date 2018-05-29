@@ -1,0 +1,282 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Subentzioa
+ *
+ * @ORM\Table(name="subentzioa")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\SubentzioaRepository")
+ */
+class Subentzioa
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="administracion", type="string", length=255, nullable=true)
+     */
+    private $administracion;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="departamento", type="string", length=255, nullable=true)
+     */
+    private $departamento;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="organo", type="string", length=255, nullable=true)
+     */
+    private $organo;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="fechaRegistro", type="string", length=255, nullable=true)
+     */
+    private $fechaRegistro;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="tituloConvocatoria", type="string", length=255, nullable=true)
+     */
+    private $tituloConvocatoria;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="bbReguladoras", type="string", length=255, nullable=true)
+     */
+    private $bbReguladoras;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="idbdns", type="string", length=255, nullable=true)
+     */
+    private $idbdns;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="eguneratua", type="datetime", nullable=true)
+     */
+    private $eguneratua;
+
+
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set administracion.
+     *
+     * @param string|null $administracion
+     *
+     * @return Subentzioa
+     */
+    public function setAdministracion($administracion = null)
+    {
+        $this->administracion = $administracion;
+
+        return $this;
+    }
+
+    /**
+     * Get administracion.
+     *
+     * @return string|null
+     */
+    public function getAdministracion()
+    {
+        return $this->administracion;
+    }
+
+    /**
+     * Set departamento.
+     *
+     * @param string|null $departamento
+     *
+     * @return Subentzioa
+     */
+    public function setDepartamento($departamento = null)
+    {
+        $this->departamento = $departamento;
+
+        return $this;
+    }
+
+    /**
+     * Get departamento.
+     *
+     * @return string|null
+     */
+    public function getDepartamento()
+    {
+        return $this->departamento;
+    }
+
+    /**
+     * Set organo.
+     *
+     * @param string|null $organo
+     *
+     * @return Subentzioa
+     */
+    public function setOrgano($organo = null)
+    {
+        $this->organo = $organo;
+
+        return $this;
+    }
+
+    /**
+     * Get organo.
+     *
+     * @return string|null
+     */
+    public function getOrgano()
+    {
+        return $this->organo;
+    }
+
+    /**
+     * Set fechaRegistro.
+     *
+     * @param string|null $fechaRegistro
+     *
+     * @return Subentzioa
+     */
+    public function setFechaRegistro($fechaRegistro = null)
+    {
+        $this->fechaRegistro = $fechaRegistro;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaRegistro.
+     *
+     * @return string|null
+     */
+    public function getFechaRegistro()
+    {
+        return $this->fechaRegistro;
+    }
+
+    /**
+     * Set tituloConvocatoria.
+     *
+     * @param string|null $tituloConvocatoria
+     *
+     * @return Subentzioa
+     */
+    public function setTituloConvocatoria($tituloConvocatoria = null)
+    {
+        $this->tituloConvocatoria = $tituloConvocatoria;
+
+        return $this;
+    }
+
+    /**
+     * Get tituloConvocatoria.
+     *
+     * @return string|null
+     */
+    public function getTituloConvocatoria()
+    {
+        return $this->tituloConvocatoria;
+    }
+
+    /**
+     * Set bbReguladoras.
+     *
+     * @param string|null $bbReguladoras
+     *
+     * @return Subentzioa
+     */
+    public function setBbReguladoras($bbReguladoras = null)
+    {
+        $this->bbReguladoras = $bbReguladoras;
+
+        return $this;
+    }
+
+    /**
+     * Get bbReguladoras.
+     *
+     * @return string|null
+     */
+    public function getBbReguladoras()
+    {
+        return $this->bbReguladoras;
+    }
+
+    /**
+     * Set idbdns.
+     *
+     * @param string|null $idbdns
+     *
+     * @return Subentzioa
+     */
+    public function setIdbdns($idbdns = null)
+    {
+        $this->idbdns = $idbdns;
+
+        return $this;
+    }
+
+    /**
+     * Get idbdns.
+     *
+     * @return string|null
+     */
+    public function getIdbdns()
+    {
+        return $this->idbdns;
+    }
+
+    /**
+     * Set eguneratua.
+     *
+     * @param \DateTime|null $eguneratua
+     *
+     * @return Subentzioa
+     */
+    public function setEguneratua($eguneratua = null)
+    {
+        $this->eguneratua = $eguneratua;
+
+        return $this;
+    }
+
+    /**
+     * Get eguneratua.
+     *
+     * @return \DateTime|null
+     */
+    public function getEguneratua()
+    {
+        return $this->eguneratua;
+    }
+}
