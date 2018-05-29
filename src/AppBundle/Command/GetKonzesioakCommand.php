@@ -2,27 +2,25 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Entity\Subentzioa;
+use AppBundle\Entity\Konzesioa;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use GuzzleHttp\Client;
 
-
-class GetSubentzioakCommand extends ContainerAwareCommand
+class GetKonzesioakCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('get-subentzioak')
-            ->setDescription('Subentzioak eskuratzeko aplikazioa')
+            ->setName('get-konzesioak')
+            ->setDescription('...')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $headers = [
             'headers' => [
                 'Accept-Encoding'           => 'gzip, deflate',
@@ -32,16 +30,18 @@ class GetSubentzioakCommand extends ContainerAwareCommand
                 'User-Agent'                => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36',
                 'Accept'                    => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
                 'Cache-Control'             => 'no-cache',
-                'Referer'                   => 'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/convocatorias',
+                'Referer'                   => 'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/concesiones',
                 'DNT'                       => 1,
             ],
             'cookies'   => true,
             'debug'     => false
         ];
 
+        // Lehen orria
+        /** @var Client $client */
         $client = new Client($headers);
         try {
-            $r = $client->request( 'GET', 'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/convocatorias' );
+            $r = $client->request( 'GET', 'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/concesiones' );
         } catch ( GuzzleException $e ) {
             echo $e->getMessage();
         }
@@ -70,7 +70,7 @@ class GetSubentzioakCommand extends ContainerAwareCommand
         );
 
         $r = $client->post(
-            'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/convocatorias', array (
+            'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/concesiones', array (
             'form_params' => $post_data
         ));
 
@@ -80,7 +80,7 @@ class GetSubentzioakCommand extends ContainerAwareCommand
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_VERBOSE, true);
-        curl_setopt( $ch, CURLOPT_URL, 'http://www.pap.minhafp.gob.es/bdnstrans/busqueda?type=convs&_search=false&nd=1521189224961&rows=50&page=1&sidx=4&sord=desc' );
+        curl_setopt( $ch, CURLOPT_URL, 'http://www.pap.minhafp.gob.es/bdnstrans/busqueda?type=concs&_search=false&nd=1521466639104&rows=50&page=1&sidx=8&sord=asc' );
 
         $kabezerak = [
             'Pragma'                    => 'no-cache',
@@ -91,7 +91,7 @@ class GetSubentzioakCommand extends ContainerAwareCommand
             'User-Agent'                => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36',
             'Accept'                    => 'application/json, text/javascript, */*; q=0.01',
             'Cache-Control'             => 'no-cache',
-            'Referer'                   => 'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/convocatorias',
+            'Referer'                   => 'http://www.pap.minhafp.gob.es/bdnstrans/GE/es/concesiones',
             'X-Requested-With'          => 'XMLHttpRequest',
             'DNT'                       => 1,
             'Connection'                => 'keep-alive'
@@ -106,31 +106,36 @@ class GetSubentzioakCommand extends ContainerAwareCommand
         $data = json_decode( $erantzuna, true );
         $miJson = json_encode( $data[ "rows" ] );
         $arr = array();
+
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
 
-        $output->writeln( 'Subentzioen datuak esportatzen...' );
-
         if ( array_key_exists("rows", $data)) {
-            foreach ($data["rows"] as $a) {
-
-                $output->writeln( $a[ 5 ] );
-                $s = new Subentzioa();
-                $s->setAdministracion( $a[ 1 ] );
-                $s->setDepartamento( $a[ 2 ] );
-                $s->setOrgano( $a[ 3 ] );
-                $s->setFechaRegistro( $a[ 4 ] );
-                $s->setTituloConvocatoria( $a[ 5 ] );
-                $s->setBbReguladoras( $a[ 6 ] );
-                $s->setIdbdns( $a[ 7 ] );
-                $s->setEguneratua( new \DateTime() );
-                $em->persist( $s );
+            if ($data["rows"] !== null) {
+                foreach ($data["rows"] as $a) {
+                    /** @var Konzesioa $k */
+                    $k = new Konzesioa();
+                    $k->setAdministracion( $a[ 2 ] );
+                    $k->setDepartamento( $a[ 3 ] );
+                    $k->setOrgano( $a[ 4 ] );
+                    $k->setTituloConvocatoria( $a[ 5 ] );
+                    $k->setBbReguladoras( $a[ 6 ] );
+                    $k->setAplicacionPresupuestaria( $a[ 7 ] );
+                    $k->setFechaConcesion( $a[ 8 ] );
+                    $k->setBeneficiario( $a[ 9 ] );
+                    $k->setImporte( $a[ 10 ] );
+                    $k->setInstrumento( $a[ 11 ] );
+                    $k->setAyudaEquivalente( $a[ 12 ] );
+                    $k->setDetalles( $a[ 13 ] );
+                    $em->persist( $k );
+                }
+                $em->flush();
             }
-            $em->flush();
         }
 
-        $output->writeln('Amaitu da.');
+        $output->writeln('Fin.');
     }
+
 
     function parse_cookie($gaileta) {
 
@@ -158,5 +163,4 @@ class GetSubentzioakCommand extends ContainerAwareCommand
 
         return $resp;
     }
-
 }
